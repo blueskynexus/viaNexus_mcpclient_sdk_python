@@ -8,9 +8,9 @@ To install the SDK, you can use pip:
 
 ```bash
 pip install vianexus-mcp-client-sdk
+or
+pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archive/refs/tags/v0.1.7-pre.tar.gz
 ```
-
-**Note:** This SDK depends on other packages like `google-ads-sdk` and `mcp-client`. Make sure these are correctly installed in your environment.
 
 ## Usage
 
