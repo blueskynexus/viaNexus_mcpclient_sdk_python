@@ -4,20 +4,16 @@ from pydantic import BaseModel
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 
 class GeminiLLMAgent(LlmAgent):
-    def __init__(self, model: str, name: str, description: str, instruction: str, input_schema: BaseModel, tools: list[MCPToolset], output_key: str):
-        self.name = name
-        self.model = model
-        self.description = description
-        self.instruction = instruction
-        self.input_schema = input_schema | None
-        self.tools = tools
-        self.output_key = output_key | None
+    model: str
+    tools: list[MCPToolset]
+    
+    def __init__(self, model: str, tools: list[MCPToolset]):
         super().__init__(
-            name=self.name,
-            model=self.model,
-            description=self.description,
-            instruction=self.instruction,
-            input_schema=self.input_schema,
-            tools=self.tools,
-            output_key=self.output_key
+            name="ViaNexus_Agent",
+            model=model,
+            description="An agent for the viaNexus financial data platform.",
+            instruction="You are a helpful financial data assistant, an agent for the viaNexus financial data platform.",
+            input_schema=None,
+            tools=tools,
+            output_key=None
         )

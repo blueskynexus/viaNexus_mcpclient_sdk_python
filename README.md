@@ -27,45 +27,58 @@ from google.adk.tools.mcp_tool.mcp_toolset import StreamableHTTPConnectionParams
 
 async def main():
     # 1. Set up the OAuth provider and authenticate
-    # This will handle the OAuth 2.0 flow to authenticate with the MCP server.
+    # This will handle the OAuth 2.0 flow to authenticate with the viaNexus MCP server.
     # It will start a local server to handle the redirect callback.
     oauth_provider_manager = ViaNexusOAuthProvider(
-        name="my-app",
-        server_url="https://mcp.vianexus.com", # Replace with your server URL
-        server_port="443", # Replace with your server port
-        user_credentials="path/to/your/credentials.json" # Replace with path to your credentials
+        server_url="URL for the viaNexus MCP Server>", # Discovery of Auth server, the server providing /.well-known/oauth-protected-resource
+        server_port="443", # Replace with viaNexus MCP server port
+        user_credentials="" # Replace with email address to use for Authorization and Authentication
     )
+    # Intialize the OAuth client and starts the Callback server for client side of OAuth2.0/2.1
     oauth_provider = await oauth_provider_manager.initialize()
 
     # 2. Create connection parameters from the OAuth provider
-    # We assume StreamableHTTPConnectionParams can be initialized with the oauth_provider object.
-    # If this is not the case, you might need to adapt this part based on the documentation
-    # of the underlying libraries.
-    connection_params = StreamableHTTPConnectionParams(oauth_provider)
+    connection_params = StreamableHTTPConnectionParams(
+            url=f"{server_url}:{server_port}/mcp/",
+            auth=oauth_provider,
+    )
 
     # 3. Create a toolset
     mcp_toolset = GeminiMCPToolset(connection_params=connection_params)
 
     # 4. Create a Gemini agent
     agent = GeminiLLMAgent(
-        model="gemini-pro",
-        name="my-gemini-agent",
-        description="A simple Gemini agent.",
-        instruction="You are a helpful assistant.",
-        input_schema=None,  # Define your input schema if needed
+        model="<GEMINI model i.e. gemini-2.5-flash>",
         tools=[mcp_toolset],
-        output_key=None
     )
 
     # 5. Create a runner and execute the agent
     runner = GeminiRunner(agent=agent, name="my-runner", session_id="my-session")
     await runner.initialize()
-    response = await runner.run_async("Hello, who are you?")
-    print(f"Agent response: {response}")
+
+    while True:
+        try:
+            query = input("Enter a query: ")
+            logging.debug(f"Query: {query}")
+            if query == "exit":
+                break
+            if not query:
+                continue
+            output = await runner.run_async(query)
+            logging.info(f"Agent: {output}")
+        except KeyboardInterrupt:
+            logging.warning("Exiting...")
+            break
+        except Exception as e:
+            logging.warning(f"Error: {e}")
+            continue
 
 if __name__ == "__main__":
     asyncio.run(main())
-```
+
+## LLM Support
+
+Currently, the viaNexus MCP Client SDK for Python supports Google's Gemini family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
 
 ## Contributing
 

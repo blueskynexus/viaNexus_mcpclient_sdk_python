@@ -10,8 +10,8 @@ from mcp import ClientSession
 class ViaNexusOAuthProvider:
     """Manages MCP server connections and tool execution."""
 
-    def __init__(self, name: str, server_url: str, server_port: str, user_credentials: str) -> None:
-        self.name: str = name
+    def __init__(self, server_url: str, server_port: str, user_credentials: str) -> None:
+        self.name: str = "ViaNexus_OAuthProvider"
         self.server_url: str = server_url
         self.server_port: str = server_port
         self.user_credentials: str = user_credentials
