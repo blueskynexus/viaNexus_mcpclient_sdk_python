@@ -3,7 +3,7 @@ from typing import Any
 from google.genai import types as genai_types
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from gemini.agents.llm_agent import GeminiLLMAgent
+from vianexus_mcpclient_sdk.gemini.agents.llm_agent import GeminiLLMAgent
 
 
 class GeminiRunner(Runner):

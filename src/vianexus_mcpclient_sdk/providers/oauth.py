@@ -3,7 +3,7 @@ from typing import Any
 import requests
 from mcp.client.auth import OAuthClientProvider, TokenStorage
 from mcp.shared.auth import OAuthClientInformationFull, OAuthClientMetadata, OAuthToken
-from servers.callback.callback_server import CallbackServer
+from vianexus_mcpclient_sdk.servers.callback.callback_server import CallbackServer
 from mcp import ClientSession
 
 
