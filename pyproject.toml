@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vianexus_mcpclient_sdk_python"
+name = "vianexus_mcpclient_sdk"
 version = "0.1.1"
 authors = [
   { name="viaNexus", email="support@vianexus.com" },
