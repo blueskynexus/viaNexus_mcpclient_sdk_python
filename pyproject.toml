@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vianexus_mcpclient_sdk_python"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="viaNexus", email="support@vianexus.com" },
 ]
@@ -17,13 +17,13 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "google-adk==1.3.0",
-    "pydantic==2.7.1",
+    "google-adk @ https://github.com/blueskynexus/adk-python/archive/refs/tags/v0.1.1-alpha.tar.gz",
+    "pydantic<3.0.0",
     "google-generativeai==0.5.4",
-    "requests==2.31.0",
-    "httpx<=1.0.0",
-    "anyio>=4.8.0",
-    "mcp>=1.11.0"
+    "requests==2.32.4",
+    "httpx<1.0.0",
+    "anyio<5.8.0",
+    "mcp==1.11.0"
 ]
 
 [project.urls]
