@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 import requests
 from mcp.client.auth import OAuthClientProvider, TokenStorage
@@ -31,7 +32,7 @@ class ViaNexusOAuthProvider:
 
             client_metadata_dict = {
                 "client_name": "ViaNexus Auth Client",
-                "user_credentials": self.user_credentials,
+                "contacts": [self.user_credentials],
                 "redirect_uris": ["http://localhost:3030/callback"],
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
@@ -40,8 +41,10 @@ class ViaNexusOAuthProvider:
 
             async def _default_redirect_handler(authorization_url: str) -> None:
                 """Default redirect handler that opens the URL in a browser."""
+                loop = asyncio.get_event_loop()
+                response = await loop.run_in_executor(None, requests.get, authorization_url)
                 try:
-                    await requests.get(authorization_url)
+                    response.raise_for_status()
                 except Exception as e:
                     raise e
 
