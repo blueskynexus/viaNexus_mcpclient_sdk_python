@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vianexus_mcpclient_sdk_python"
-version = "0.1.1"
+name = "vianexus_mcpclient_sdk"
+version = "0.1.4"
 authors = [
   { name="viaNexus", email="support@vianexus.com" },
 ]
-description = "A Python SDK for the viaNexus MCP."
+description = "A Python SDK for the viaNexus MCP Client."
 readme = "README.md"
 requires-python = ">=3.12"
 classifiers = [
