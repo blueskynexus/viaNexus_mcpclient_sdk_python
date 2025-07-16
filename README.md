@@ -13,6 +13,20 @@ pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archiv
 ```
 
 ## Usage
+# Create a configuration file `config.yaml`
+```yaml
+development:
+  LLM_API_KEY: "<LLM API Key>" # Currently only supports GEMINI
+  LLM_MODEL: "<GEMINI Model Name>" # gemini-2.5-flash
+  LOG_LEVEL: "<LOGGING LEVEL>"
+  user_id: "<UUID for the Agent Session>"
+  app_name: "viaNexus_Agent"
+  mcpServers:
+    viaNexus:
+      user_credentials: "<Email Address to use for Authentication/Authorization>"
+      server_url: "<viaNexus MCP Server HTTP URL>"
+      server_port: <viaNexus MCP Port>
+```
 
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
 
