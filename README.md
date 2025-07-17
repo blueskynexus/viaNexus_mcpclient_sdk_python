@@ -1,7 +1,7 @@
 # viaNexus MCP Client SDK for Python
 
-The viaNexus MCP Client SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data with full Authentication and Authorization mechanisms embedded in the HTTP transport.
-This SDK allows you to build a powerful financial digital employee or assitant that will have access to the viaNexus Data Platform financial dataset catalog.
+The viaNexus MCP Client SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data through viaNexus.
+This SDK allows you to build a powerful financial Agent or digital employee/assitant that will have access to the viaNexus Data Platform financial dataset catalog.
 
 ## Installation
 
@@ -16,6 +16,8 @@ pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archiv
 - **Note:** _Do not install the google-adk module from google, use the one provided by the vianexus_mcpclient_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport_
 
 ## Usage
+### OAuth
+**Note:** OAuth is handled by the viaNexus_mcpcleint_sdk in the HTTP transport, you do not need to setup any authentication or authorization mechanisms
 ### Create a configuration file `config.yaml`
 ```yaml
 development:
