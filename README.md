@@ -23,7 +23,7 @@ development:
   app_name: "viaNexus_Agent"
   mcpServers:
     viaNexus:
-      user_credentials: "<Email Address to use for Authentication/Authorization>"
+      user_credentials: "<viaNexus Account email Address to use for Authentication/Authorization>"
       server_url: "<viaNexus MCP Server HTTP URL>"
       server_port: <viaNexus MCP Port>
 ```
