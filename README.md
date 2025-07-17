@@ -13,7 +13,7 @@ pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archiv
 ```
 
 ## Usage
-# Create a configuration file `config.yaml`
+### Create a configuration file `config.yaml`
 ```yaml
 development:
   LLM_API_KEY: "<LLM API Key>" # Currently only supports GEMINI
@@ -32,6 +32,8 @@ Here's a basic example of how to use the SDK to create a Gemini agent and run it
 
 ```python
 import asyncio
+import yaml
+from typing import Any
 from gemini.agents.llm_agent import GeminiLLMAgent
 from gemini.runners.runner import GeminiRunner
 from gemini.tools.mcp_toolset import GeminiMCPToolset
