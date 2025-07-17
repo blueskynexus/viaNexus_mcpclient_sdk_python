@@ -1,6 +1,7 @@
 # viaNexus MCP Client SDK for Python
 
-The viaNexus MCP Client SDK for Python provides a convenient way to interact with the viaNexus Multi-modal Conversation Platform (MCP). This SDK allows you to build powerful conversational AI applications with Gemini models, leveraging the capabilities of the MCP platform.
+The viaNexus MCP Client SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data with full Authentication and Authorization mechanisms embedded in the HTTP transport.
+This SDK allows you to build a powerful financial digital employee or assitant that will have access to the viaNexus Data Platform financial dataset catalog.
 
 ## Installation
 
