@@ -12,7 +12,7 @@ pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archiv
 ### Dependencies
 - None required
 - vianexus_mcpclient_sdk will pull in all of the required dependencies.
-Note: Do not install the google-adk module from google, use the one provided by the vianexus_mcpclient_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport
+- **Note:** _Do not install the google-adk module from google, use the one provided by the vianexus_mcpclient_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport_
 
 ## Usage
 ### Create a configuration file `config.yaml`
