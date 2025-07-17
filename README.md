@@ -15,7 +15,7 @@ pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archiv
 Note: Do not install the google-adk module from google, use the one provided by the vianexus_mcpclient_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport
 
 ## Usage
-# Create a configuration file `config.yaml`
+### Create a configuration file `config.yaml`
 ```yaml
 development:
   LLM_API_KEY: "<LLM API Key>" # Currently only supports GEMINI
@@ -25,9 +25,9 @@ development:
   app_name: "viaNexus_Agent"
   mcpServers:
     viaNexus:
-      user_credentials: "<Email Address to use for Authentication/Authorization>"
-      server_url: "<viaNexus MCP Server HTTP URL>" # Provide the viaNexus MCP server URL
-      server_port: <viaNexus MCP Port> # Provide the viaNexus MCP server Port if its missing it will default to 443
+      user_credentials: "<viaNexus Account email Address to use for Authentication/Authorization>"
+      server_url: "<viaNexus MCP Server HTTP URL>"
+      server_port: <viaNexus MCP Port>
 ```
 
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
@@ -48,7 +48,7 @@ async def main():
     oauth_provider_manager = ViaNexusOAuthProvider(
         server_url="URL for the viaNexus MCP Server>", # Discovery of Auth server, the server providing /.well-known/oauth-protected-resource
         server_port="<Port for the viaNexus MCP Server>", # Replace with viaNexus MCP server port
-        user_credentials="" # Replace with email address to use for Authorization and Authentication
+        user_credentials="<viaNexus Account email address>" # Replace with email address to use for Authorization and Authentication
     )
     # Intialize the OAuth client and starts the Callback server for client side of OAuth2.0/2.1
     oauth_provider = await oauth_provider_manager.initialize()
