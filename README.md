@@ -7,10 +7,12 @@ The viaNexus MCP Client SDK for Python provides a convenient way to interact wit
 To install the SDK, you can use pip:
 
 ```bash
-pip install vianexus-mcp-client-sdk
-or
 pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archive/refs/tags/v0.1.7-pre.tar.gz
 ```
+### Dependencies
+- None required
+- vianexus_mcpclient_sdk will pull in all of the required dependencies.
+Note: Do not install the google-adk module from google, use the one provided by the vianexus_mcpclient_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport
 
 ## Usage
 # Create a configuration file `config.yaml`
@@ -24,19 +26,19 @@ development:
   mcpServers:
     viaNexus:
       user_credentials: "<Email Address to use for Authentication/Authorization>"
-      server_url: "<viaNexus MCP Server HTTP URL>"
-      server_port: <viaNexus MCP Port>
+      server_url: "<viaNexus MCP Server HTTP URL>" # Provide the viaNexus MCP server URL
+      server_port: <viaNexus MCP Port> # Provide the viaNexus MCP server Port if its missing it will default to 443
 ```
 
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
 
 ```python
 import asyncio
-from gemini.agents.llm_agent import GeminiLLMAgent
-from gemini.runners.runner import GeminiRunner
-from gemini.tools.mcp_toolset import GeminiMCPToolset
-from providers.oauth import ViaNexusOAuthProvider
-# The following import is assumed for creating connection parameters.
+from vianexus_mcpclient_sdk.gemini.agents.llm_agent import GeminiLLMAgent
+from vianexus_mcpclient_sdk.gemini.runners.runner import GeminiRunner
+from vianexus_mcpclient_sdk.gemini.tools.mcp_toolset import GeminiMCPToolset
+from vianexus_mcpclient_sdk.providers.oauth import ViaNexusOAuthProvider
+# The following import is a patched fork of the adk-python which provides support for OAuth protocol through HTTP transport
 from google.adk.tools.mcp_tool.mcp_toolset import StreamableHTTPConnectionParams 
 
 async def main():
@@ -45,7 +47,7 @@ async def main():
     # It will start a local server to handle the redirect callback.
     oauth_provider_manager = ViaNexusOAuthProvider(
         server_url="URL for the viaNexus MCP Server>", # Discovery of Auth server, the server providing /.well-known/oauth-protected-resource
-        server_port="443", # Replace with viaNexus MCP server port
+        server_port="<Port for the viaNexus MCP Server>", # Replace with viaNexus MCP server port
         user_credentials="" # Replace with email address to use for Authorization and Authentication
     )
     # Intialize the OAuth client and starts the Callback server for client side of OAuth2.0/2.1

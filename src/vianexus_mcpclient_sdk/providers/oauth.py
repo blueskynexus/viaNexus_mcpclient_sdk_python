@@ -13,7 +13,7 @@ class ViaNexusOAuthProvider:
     def __init__(self, server_url: str, server_port: str, user_credentials: str) -> None:
         self.name: str = "ViaNexus_OAuthProvider"
         self.server_url: str = server_url
-        self.server_port: str = server_port
+        self.server_port: str = server_port if server_port else "443"
         self.user_credentials: str = user_credentials
 
     async def initialize(self) -> tuple[ClientSession, str]:
