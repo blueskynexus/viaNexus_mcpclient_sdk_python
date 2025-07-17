@@ -70,7 +70,7 @@ async def main():
     runner = GeminiRunner(agent=agent, name="my-runner", session_id="my-session")
     await runner.initialize()
 
-    while True:
+     while True:
         try:
             query = input("Enter a query: ")
             logging.debug(f"Query: {query}")
@@ -78,8 +78,8 @@ async def main():
                 break
             if not query:
                 continue
-            output = await runner.run_async(query)
-            logging.info(f"Agent: {output}")
+            async for event in runner.run_async(query):
+                logging.info(f"Agent: {event}")
         except KeyboardInterrupt:
             logging.warning("Exiting...")
             break

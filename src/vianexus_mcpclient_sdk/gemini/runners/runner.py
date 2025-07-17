@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, AsyncGenerator
 from google.genai import types as genai_types
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -27,11 +27,9 @@ class GeminiRunner(Runner):
             session_service=self.session_service,
         )
 
-    async def run_async(self, query: str):
+    async def run_async(self, query: str) -> AsyncGenerator[Any, Any]:
         user_content = genai_types.Content(role='user', parts=[genai_types.Part(text=query)])
-        final_response_content = "No final response received."
         async for event in super().run_async(user_id=self.user_id, session_id=self.session_id, new_message=user_content):
-            logging.debug(f"Event: {event}")
-            if event.is_final_response() and event.content and event.content.parts:
-                final_response_content = event.content.parts[0].text
-        return final_response_content
+            logging.debug(f"Runner Event: {event}")
+            if event.is_final_response() and event.content and event.content.parts and event.content.parts[0].text:
+                yield event.content.parts
