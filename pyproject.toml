@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vianexus_mcpclient_sdk"
-version = "0.1.11"
+version = "0.1.12"
 authors = [
   { name="viaNexus", email="support@vianexus.com" },
 ]
 description = "A Python SDK for the viaNexus MCP Client."
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
