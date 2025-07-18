@@ -79,7 +79,7 @@ async def main():
     )
 
     # 5. Create a runner and execute the agent
-    runner = GeminiRunner(agent=agent, name="my-runner", session_id="my-session")
+    runner = GeminiRunner(agent=agent, app_name="my-runner", user_id="UUID for the session", session_id="my-session")
     await runner.initialize()
 
      while True:
