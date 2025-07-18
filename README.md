@@ -16,6 +16,10 @@ pip install https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/archiv
 - **Note:** _Do not install the google-adk module from google, use the one provided by the vianexus_mcpclient_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport_
 
 ## Usage
+### LLM Models
+LLM selection or use is handled within the SDK, there is no need to integrate seperately, as LLM support expands, this list will grow accordingly.
+- GEMINI: gemini-2.5-flash, gemini-2.5-pro
+
 ### OAuth
 **Note:** OAuth is handled by the viaNexus_mcpcleint_sdk in the HTTP transport, you do not need to setup any authentication or authorization mechanisms
 ### Create a configuration file `config.yaml`
