@@ -45,7 +45,7 @@ from vianexus_mcpclient_sdk.providers.oauth import ViaNexusOAuthProvider
 from google.adk.tools.mcp_tool.mcp_toolset import StreamableHTTPConnectionParams 
 
 async def main():
-    # Before anything set the GEMINI API KEY
+    # Before anything set the GEMINI API KEY as an Environment variable
     os.environ["GEMINI_API_KEY"] = config["LLM_API_KEY"]
 
     # 1. Set up the OAuth provider and authenticate
