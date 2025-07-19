@@ -46,7 +46,7 @@ from vianexus_mcpclient_sdk.gemini.runners.runner import GeminiRunner
 from vianexus_mcpclient_sdk.gemini.tools.mcp_toolset import GeminiMCPToolset
 from vianexus_mcpclient_sdk.providers.oauth import ViaNexusOAuthProvider
 # The following import is a patched fork of the adk-python which provides support for OAuth protocol through HTTP transport
-from google.adk.tools.mcp_tool.mcp_toolset import StreamableHTTPConnectionParams 
+from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
 async def main():
     # Before anything set the GEMINI API KEY as an Environment variable
