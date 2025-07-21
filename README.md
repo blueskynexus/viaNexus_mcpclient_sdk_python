@@ -65,7 +65,8 @@ async def main():
 
     # 2. Create connection parameters from the OAuth provider
     connection_params = StreamableHTTPConnectionParams(
-            url=f"{server_url}:{server_port}/mcp/",
+        # Remove trailing forward slash
+            url=f"{server_url}:{server_port}/mcp",
             auth=oauth_provider,
     )
 
