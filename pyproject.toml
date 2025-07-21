@@ -17,7 +17,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "google-adk @ https://github.com/blueskynexus/adk-python/archive/refs/tags/v0.1.2-alpha.tar.gz",
+    "google-adk",
     "pydantic<3.0.0",
     "google-generativeai==0.5.4",
     "google.genai==1.25.0",
@@ -26,6 +26,9 @@ dependencies = [
     "anyio<5.8.0",
     "mcp==1.11.0"
 ]
+
+[tool.uv.sources]
+google-adk = { git = "https://github.com/blueskynexus/adk-python", tag = "v0.1.2-alpha" }
 
 [project.urls]
 "Homepage" = "https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python"
