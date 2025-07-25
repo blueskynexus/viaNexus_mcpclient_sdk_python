@@ -10,11 +10,12 @@ from mcp import ClientSession
 class ViaNexusOAuthProvider:
     """Manages MCP server connections and tool execution."""
 
-    def __init__(self, server_url: str, server_port: str, user_credentials: str) -> None:
+    def __init__(self, server_url: str, server_port: str, user_credentials: str, software_id: str) -> None:
         self.name: str = "ViaNexus_OAuthProvider"
         self.server_url: str = server_url
         self.server_port: str = server_port if server_port else "443"
         self.user_credentials: str = user_credentials
+        self.software_id: str = software_id
 
     async def initialize(self) -> tuple[ClientSession, str]:
         """Initialize the server connection."""
@@ -37,6 +38,7 @@ class ViaNexusOAuthProvider:
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
                 "token_endpoint_auth_method": "client_secret_post",
+                "software_id": self.software_id
             }
 
             async def _default_redirect_handler(authorization_url: str) -> None:
