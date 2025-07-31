@@ -35,6 +35,8 @@ development:
       user_credentials: "<viaNexus Account email Address to use for Authentication/Authorization>"
       server_url: "<viaNexus MCP Server HTTP URL>"
       server_port: <viaNexus MCP Port>
+      software_id: <issued software id from api>
+      software_statement: <issued jwt from api>
 ```
 
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
@@ -103,6 +105,7 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
+```
 ## LLM Support
 
 Currently, the viaNexus MCP Client SDK for Python supports Google's Gemini family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
