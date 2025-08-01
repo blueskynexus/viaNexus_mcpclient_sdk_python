@@ -59,7 +59,7 @@ async def main():
     oauth_provider_manager = ViaNexusOAuthProvider(
         server_url="URL for the viaNexus MCP Server>", # Discovery of Auth server, the server providing /.well-known/oauth-protected-resource
         server_port="<Port for the viaNexus MCP Server>", # Replace with viaNexus MCP server port
-        user_credentials="<viaNexus Account email address>" # Replace with email address to use for Authorization and Authentication
+        software_statement="JWT software statement"
     )
     # Intialize the OAuth client and starts the Callback server for client side of OAuth2.0/2.1
     oauth_provider = await oauth_provider_manager.initialize()
