@@ -40,12 +40,10 @@ def patch_oauth_provider_with_software_statement(provider: OAuthClientProvider, 
 class ViaNexusOAuthProvider:
     """Manages MCP server connections and tool execution."""
 
-    def __init__(self, server_url: str, server_port: str, user_credentials: str, software_id: str, software_statement: str) -> None:
+    def __init__(self, server_url: str, server_port: str, software_statement: str) -> None:
         self.name: str = "ViaNexus_OAuthProvider"
         self.server_url: str = server_url
         self.server_port: str = server_port if server_port else "443"
-        self.user_credentials: str = user_credentials
-        self.software_id: str = software_id
         self.software_statement: str = software_statement
 
     async def initialize(self) -> tuple[ClientSession, str]:
@@ -64,12 +62,10 @@ class ViaNexusOAuthProvider:
 
             client_metadata_dict = {
                 "client_name": "ViaNexus Auth Client",
-                "contacts": [self.user_credentials],
                 "redirect_uris": ["http://localhost:3030/callback"],
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
                 "token_endpoint_auth_method": "client_secret_post",
-                "software_id": self.software_id
             }
 
             async def _default_redirect_handler(authorization_url: str) -> None:
