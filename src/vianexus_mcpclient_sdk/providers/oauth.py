@@ -5,16 +5,42 @@ from mcp.client.auth import OAuthClientProvider, TokenStorage
 from mcp.shared.auth import OAuthClientInformationFull, OAuthClientMetadata, OAuthToken
 from vianexus_mcpclient_sdk.servers.callback.callback_server import CallbackServer
 from mcp import ClientSession
+from urllib.parse import urljoin
+import httpx
 
+class ViaNexusOAuthClientProvider(OAuthClientProvider):
+    """Manages MCP server connections and tool execution."""
+    def __init__(self, server_url, client_metadata, storage, redirect_handler, callback_handler, software_statement) -> None:
+        super().__init__(server_url, client_metadata, storage, redirect_handler, callback_handler)
+        self.software_statement = software_statement
+
+    async def _register_client(self):
+        """Build registration request with software statement."""
+        if self.context.client_info:
+            return None
+
+        if self.context.oauth_metadata and self.context.oauth_metadata.registration_endpoint:
+            registration_url = str(self.context.oauth_metadata.registration_endpoint)
+        else:
+            auth_base_url = self.context.get_authorization_base_url(self.context.server_url)
+            registration_url = urljoin(auth_base_url, "/register")
+
+        registration_data = self.context.client_metadata.model_dump(by_alias=True, mode="json", exclude_none=True)
+        # Add software statement
+        registration_data["software_statement"] = self.software_statement
+
+        return httpx.Request(
+            "POST", registration_url, json=registration_data, headers={"Content-Type": "application/json"}
+        )
 
 class ViaNexusOAuthProvider:
     """Manages MCP server connections and tool execution."""
 
-    def __init__(self, server_url: str, server_port: str, user_credentials: str) -> None:
+    def __init__(self, server_url: str, server_port: str, software_statement: str) -> None:
         self.name: str = "ViaNexus_OAuthProvider"
         self.server_url: str = server_url
         self.server_port: str = server_port if server_port else "443"
-        self.user_credentials: str = user_credentials
+        self.software_statement: str = software_statement
 
     async def initialize(self) -> tuple[ClientSession, str]:
         """Initialize the server connection."""
@@ -32,7 +58,6 @@ class ViaNexusOAuthProvider:
 
             client_metadata_dict = {
                 "client_name": "ViaNexus Auth Client",
-                "contacts": [self.user_credentials],
                 "redirect_uris": ["http://localhost:3030/callback"],
                 "grant_types": ["authorization_code", "refresh_token"],
                 "response_types": ["code"],
@@ -48,7 +73,7 @@ class ViaNexusOAuthProvider:
                 except Exception as e:
                     raise e
 
-            oauth_provider = OAuthClientProvider(
+            oauth_provider = ViaNexusOAuthClientProvider(
                 server_url=f"{self.server_url}:{self.server_port}",
                 client_metadata=OAuthClientMetadata.model_validate(
                     client_metadata_dict
@@ -56,6 +81,7 @@ class ViaNexusOAuthProvider:
                 storage=InMemoryTokenStorage(),
                 redirect_handler=_default_redirect_handler,
                 callback_handler=callback_handler,
+                software_statement=self.software_statement
             )
         except Exception as e:
             raise e
