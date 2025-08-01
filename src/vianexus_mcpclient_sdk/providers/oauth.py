@@ -8,34 +8,30 @@ from mcp import ClientSession
 from urllib.parse import urljoin
 import httpx
 
-def patch_oauth_provider_with_software_statement(provider: OAuthClientProvider, software_statement: str):
-    """Monkey patch the OAuth provider to include software statement in registration."""
-    
-    original_register_client = provider._register_client
-    
-    async def patched_register_client():
+class ViaNexusOAuthClientProvider(OAuthClientProvider):
+    """Manages MCP server connections and tool execution."""
+    def __init__(self, server_url, client_metadata, storage, redirect_handler, callback_handler, software_statement) -> None:
+        super().__init__(server_url, client_metadata, storage, redirect_handler, callback_handler)
+        self.software_statement = software_statement
+
+    async def _register_client(self):
         """Build registration request with software statement."""
-        if provider.context.client_info:
+        if self.context.client_info:
             return None
 
-        if provider.context.oauth_metadata and provider.context.oauth_metadata.registration_endpoint:
-            registration_url = str(provider.context.oauth_metadata.registration_endpoint)
+        if self.context.oauth_metadata and self.context.oauth_metadata.registration_endpoint:
+            registration_url = str(self.context.oauth_metadata.registration_endpoint)
         else:
-            auth_base_url = provider.context.get_authorization_base_url(provider.context.server_url)
+            auth_base_url = self.context.get_authorization_base_url(self.context.server_url)
             registration_url = urljoin(auth_base_url, "/register")
 
-        registration_data = provider.context.client_metadata.model_dump(by_alias=True, mode="json", exclude_none=True)
-        
+        registration_data = self.context.client_metadata.model_dump(by_alias=True, mode="json", exclude_none=True)
         # Add software statement
-        registration_data["software_statement"] = software_statement
+        registration_data["software_statement"] = self.software_statement
 
         return httpx.Request(
             "POST", registration_url, json=registration_data, headers={"Content-Type": "application/json"}
         )
-    
-    provider._register_client = patched_register_client
-
-
 
 class ViaNexusOAuthProvider:
     """Manages MCP server connections and tool execution."""
@@ -77,7 +73,7 @@ class ViaNexusOAuthProvider:
                 except Exception as e:
                     raise e
 
-            oauth_provider = OAuthClientProvider(
+            oauth_provider = ViaNexusOAuthClientProvider(
                 server_url=f"{self.server_url}:{self.server_port}",
                 client_metadata=OAuthClientMetadata.model_validate(
                     client_metadata_dict
@@ -85,11 +81,10 @@ class ViaNexusOAuthProvider:
                 storage=InMemoryTokenStorage(),
                 redirect_handler=_default_redirect_handler,
                 callback_handler=callback_handler,
+                software_statement=self.software_statement
             )
         except Exception as e:
             raise e
-
-        patch_oauth_provider_with_software_statement(oauth_provider, self.software_statement)
 
         return oauth_provider
 
