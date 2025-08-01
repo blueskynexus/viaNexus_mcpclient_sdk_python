@@ -32,12 +32,11 @@ development:
   app_name: "viaNexus_Agent"
   mcpServers:
     viaNexus:
-      user_credentials: "<viaNexus Account email Address to use for Authentication/Authorization>"
       server_url: "<viaNexus MCP Server HTTP URL>"
       server_port: <viaNexus MCP Port>
-      software_id: <issued software id from api>
-      software_statement: <issued jwt from api>
+      software_statement: "<SOFTWARE STATEMENT>"
 ```
+**Note:** Generate a software statement from the viaNexus api endpoint `v1/mcp/software-statement`
 
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
 
