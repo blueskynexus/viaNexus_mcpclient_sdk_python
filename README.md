@@ -5,10 +5,10 @@ This SDK allows you to build a powerful financial Agent or digital employee/assi
 
 ## Installation
 
-To install the SDK, you can use pip:
+To install the SDK, you can use uv:
 
 ```bash
-    uv add git+https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python --tag v0.1.12-pre
+    uv add git+https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python --tag v0.1.13
 ```
 ### Dependencies
 - None required
