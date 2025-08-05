@@ -36,7 +36,7 @@ development:
       server_port: <viaNexus MCP Port>
       software_statement: "<SOFTWARE STATEMENT>"
 ```
-**Note:** Generate a software statement from the viaNexus api endpoint `v1/mcp/software-statement`
+**Note:** Generate a software statement from the viaNexus api endpoint `/v1/agents/register`
 
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
 
