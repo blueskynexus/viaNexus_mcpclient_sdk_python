@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vianexus_agent_client_sdk"
+name = "vianexus_agent_sdk"
 version = "0.1.12"
 authors = [
   { name="viaNexus", email="support@vianexus.com" },
 ]
-description = "A Python SDK for the viaNexus AI Agent Client."
+description = "A Python SDK for the viaNexus AI Agent."
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [

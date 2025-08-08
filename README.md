@@ -1,6 +1,6 @@
-# viaNexus AI Agent Client SDK for Python
+# viaNexus AI Agent SDK for Python
 
-The viaNexus AI Agent Client SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data through viaNexus.
+The viaNexus AI Agent SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data through viaNexus.
 This SDK allows you to build a powerful financial Agent or digital employee/assitant that will have access to the viaNexus Data Platform financial dataset catalog.
 
 ## Installation
@@ -8,12 +8,12 @@ This SDK allows you to build a powerful financial Agent or digital employee/assi
 To install the SDK, you can use uv:
 
 ```bash
-    uv add git+https://github.com/blueskynexus/viaNexus-agent-sdk-python --tag v0.1.13
+    uv add git+https://github.com/blueskynexus/viaNexus-agent-sdk-python --tag v0.1.15-pre
 ```
 ### Dependencies
 - None required
-- vianexus_agent_client_sdk will pull in all of the required dependencies.
-- **Note:** _Do not install the google-adk module from google, use the one provided by the vianexus_agent_client_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport_
+- vianexus_agent_sdk will pull in all of the required dependencies.
+- **Note:** _Do not install the google-adk module from google, use the one provided by the vianexus_agent_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport_
 
 ## Usage
 ### LLM Models
@@ -21,7 +21,7 @@ LLM selection or use is handled within the SDK, there is no need to integrate se
 - GEMINI: gemini-2.5-flash, gemini-2.5-pro
 
 ### OAuth
-**Note:** OAuth is handled by the viaNexus_agent_cleint_sdk in the HTTP transport, you do not need to setup any authentication or authorization mechanisms
+**Note:** OAuth is handled by the viaNexus_agent_sdk in the HTTP transport, you do not need to setup any authentication or authorization mechanisms
 ### Create a configuration file `config.yaml`
 ```yaml
 development:
@@ -42,10 +42,10 @@ Here's a basic example of how to use the SDK to create a Gemini agent and run it
 
 ```python
 import asyncio
-from vianexus_agent_client_sdk.gemini.agents.llm_agent import GeminiLLMAgent
-from vianexus_agent_client_sdk.gemini.runners.runner import GeminiRunner
-from vianexus_agent_client_sdk.gemini.tools.agent_toolset import GeminiAgentToolset
-from vianexus_agent_client_sdk.providers.oauth import ViaNexusOAuthProvider
+from vianexus_agent_sdk.gemini.agents.llm_agent import GeminiLLMAgent
+from vianexus_agent_sdk.gemini.runners.runner import GeminiRunner
+from vianexus_agent_sdk.gemini.tools.agent_toolset import GeminiAgentToolset
+from vianexus_agent_sdk.providers.oauth import ViaNexusOAuthProvider
 # The following import is a patched fork of the adk-python which provides support for OAuth protocol through HTTP transport
 from google.adk.tools.agent_tool.agent_session_manager import StreamableHTTPConnectionParams
 
@@ -107,11 +107,11 @@ if __name__ == "__main__":
 ```
 ## LLM Support
 
-Currently, the viaNexus AI Agent Client SDK for Python supports Google's Gemini family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
+Currently, the viaNexus AI Agent SDK for Python supports Google's Gemini family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
 
 ## Contributing
 
-We welcome contributions to the viaNexus AI Agent Client SDK for Python. If you would like to contribute, please follow these steps:
+We welcome contributions to the viaNexus AI Agent SDK for Python. If you would like to contribute, please follow these steps:
 
 1.  Fork the repository.
 2.  Create a new branch for your feature or bug fix.
