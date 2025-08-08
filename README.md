@@ -8,7 +8,7 @@ This SDK allows you to build a powerful financial Agent or digital employee/assi
 To install the SDK, you can use uv:
 
 ```bash
-    uv add git+https://github.com/blueskynexus/viaNexus-agent-sdk-python --tag v0.1.15-pre
+    uv add git+https://github.com/blueskynexus/viaNexus-agent-sdk-python --tag v0.1.16-pre
 ```
 ### Dependencies
 - None required

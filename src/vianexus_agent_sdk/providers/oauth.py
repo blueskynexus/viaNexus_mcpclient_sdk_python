@@ -1,14 +1,14 @@
 import asyncio
 from typing import Any
 import requests
-from google.adk.client.auth import OAuthProvider, TokenStorage
-from google.adk.shared.auth import OAuthClientInformationFull, OAuthClientMetadata, OAuthToken
+from mcp.client.auth import OAuthClientProvider, TokenStorage
+from mcp.shared.auth import OAuthClientInformationFull, OAuthClientMetadata, OAuthToken
 from vianexus_agent_sdk.servers.callback.callback_server import CallbackServer
-from google.adk import ClientSession
+from mcp import ClientSession
 from urllib.parse import urljoin
 import httpx
 
-class ViaNexusOAuthProvider(OAuthProvider):
+class ViaNexusOAuthClientProvider(OAuthClientProvider):
     """Manages Agent server connections and tool execution."""
     def __init__(self, server_url, client_metadata, storage, redirect_handler, callback_handler, software_statement) -> None:
         super().__init__(server_url, client_metadata, storage, redirect_handler, callback_handler)
@@ -107,4 +107,3 @@ class InMemoryTokenStorage(TokenStorage):
 
     async def set_client_info(self, client_info: OAuthClientInformationFull) -> None:
         self._client_info = client_info
-    
