@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vianexus_mcpclient_sdk"
+name = "vianexus_agent_client_sdk"
 version = "0.1.12"
 authors = [
   { name="viaNexus", email="support@vianexus.com" },
 ]
-description = "A Python SDK for the viaNexus MCP Client."
+description = "A Python SDK for the viaNexus AI Agent Client."
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
@@ -24,12 +24,11 @@ dependencies = [
     "requests==2.32.4",
     "httpx<1.0.0",
     "anyio<5.8.0",
-    "mcp==1.11.0"
 ]
 
 [tool.uv.sources]
 google-adk = { git = "https://github.com/blueskynexus/adk-python", tag = "v0.1.2-alpha" }
 
 [project.urls]
-"Homepage" = "https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python"
-"Bug Tracker" = "https://github.com/blueskynexus/viaNexus_mcpclient_sdk_python/issues" 
+"Homepage" = "https://github.com/blueskynexus/viaNexus-agent-sdk-python"
+"Bug Tracker" = "https://github.com/blueskynexus/viaNexus-agent-sdk-python/issues" 

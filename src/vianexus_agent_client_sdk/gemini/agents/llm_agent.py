@@ -1,13 +1,13 @@
 from typing import Any
 from google.adk.agents.llm_agent import LlmAgent
 from pydantic import BaseModel
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+from google.adk.tools.agent_tool.agent_toolset import AgentToolset
 
 class GeminiLLMAgent(LlmAgent):
     model: str
-    tools: list[MCPToolset]
+    tools: list[AgentToolset]
     
-    def __init__(self, model: str, tools: list[MCPToolset]):
+    def __init__(self, model: str, tools: list[AgentToolset]):
         super().__init__(
             name="ViaNexus_Agent",
             model=model,
