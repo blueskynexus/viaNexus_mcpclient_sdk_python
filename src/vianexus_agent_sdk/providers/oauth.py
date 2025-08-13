@@ -42,7 +42,7 @@ class ViaNexusOAuthProvider:
         self.server_port: str = server_port if server_port else "443"
         self.software_statement: str = software_statement
 
-    async def initialize(self) -> tuple[ClientSession, str]:
+    async def initialize(self) -> ViaNexusOAuthClientProvider:
         """Initialize the server connection."""
         try:
             callback_server = CallbackServer(port=3030)
