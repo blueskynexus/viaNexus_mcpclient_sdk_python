@@ -24,7 +24,7 @@ class BaseMCPClient(ABC):
             # List available tools
             response = await self.session.list_tools()
             tools = response.tools
-            logging.info(f"Connected to server with tools: {[tool.name for tool in tools]}")
+            logging.debug(f"Connected to server with tools: {[tool.name for tool in tools]}")
             return True
         except Exception as e:
             logging.error(f"Failed to connect to MCP server: {e}")
@@ -32,21 +32,39 @@ class BaseMCPClient(ABC):
     
     async def chat_loop(self):
         """Run an interactive chat loop"""
-        logging.info("\nMCP Client Started!")
-        logging.info("Type your queries or 'quit' to exit.")
+        # Use print() for user-facing messages
+        print("\nMCP Client Started!")
+        print("Type your queries or 'quit' to exit.")
+        print("=" * 50)
 
         while True:
             try:
                 query = input("\nQuery: ").strip()
 
                 if query.lower() == 'quit':
+                    print("\nGoodbye!")
                     break
 
-                response = await self.process_query(query)
-                logging.info("\n" + response)
+                if not query:
+                    print("Please enter a query.")
+                    continue
 
+                print("\nProcessing...")
+                response = await self.process_query(query)
+                
+                # Use print() for the AI response
+                print("\n" + "=" * 50)
+                print("Response:")
+                print(response)
+                print("=" * 50)
+
+            except KeyboardInterrupt:
+                print("\n\nInterrupted by user. Goodbye!")
+                break
             except Exception as e:
-                logging.error(f"\nError: {str(e)}")
+                # Use print() for user-facing errors, logging for system errors
+                print(f"\nError: {str(e)}")
+                logging.error(f"Chat loop error: {e}")
     
     @abstractmethod
     async def process_query(self, query: str) -> str:

@@ -40,9 +40,39 @@ development:
 
 Here are examples of how to use the SDK to create an Anthropic agent and run it:
 
-### Simplified Approach (Recommended)
+### Ultra-Simplified Approach (Recommended)
 
-The SDK now provides an enhanced client that automatically handles connection setup:
+The SDK now provides automatic config loading! Just place your `config.yaml` in the project root:
+
+```python
+import asyncio
+import logging
+from dotenv import load_dotenv
+from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
+
+load_dotenv()  # load environment variables from .env
+
+async def main():
+    try:
+        # Set up logging
+        logging.basicConfig(level=logging.INFO)
+        
+        # Create the client - config is automatically loaded from config.yaml!
+        client = AnthropicClient()  # No config needed!
+        
+        # Connect and run - handles all the connection setup internally
+        await client.connect_and_run()
+        
+    except Exception as e:
+        logging.error(f"Setup failed: {e}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Enhanced Client Approach
+
+For more control over config loading:
 
 ```python
 import asyncio
@@ -77,7 +107,7 @@ if __name__ == "__main__":
 
 ### Original Stepwise Approach
 
-For more control over the connection process, you can still use the original approach:
+For maximum control over the connection process, you can still use the original approach:
 
 ```python
 import asyncio
@@ -115,6 +145,25 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+```
+
+### Advanced Config Options
+
+The enhanced client supports various config loading options:
+
+```python
+# Auto-load from config.yaml (default)
+client = AnthropicClient()
+
+# Load from specific environment
+client = AnthropicClient(env="production")
+
+# Load from custom config file
+client = AnthropicClient(config_path="my_config.yaml", env="staging")
+
+# Pass config programmatically
+config = {"mcpServers": {"viaNexus": {...}}}
+client = AnthropicClient(config=config)
 ```
 
 ## LLM Support

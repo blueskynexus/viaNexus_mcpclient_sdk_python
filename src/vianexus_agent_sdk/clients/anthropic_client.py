@@ -7,8 +7,8 @@ class AnthropicClient(EnhancedMCPClient):
     Anthropic-specific MCP client that uses Claude for processing queries.
     Inherits common MCP functionality from EnhancedMCPClient.
     '''
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config=None, config_path="config.yaml", env="development"):
+        super().__init__(config, config_path, env)
         self.anthropic = Anthropic()
     
     async def process_query(self, query: str) -> str:
@@ -70,10 +70,10 @@ class AnthropicClient(EnhancedMCPClient):
                 # Execute tool call
                 try:
                     result = await self.session.call_tool(tool_name, tool_args)
-                    final_text.append(f"[Calling tool {tool_name} with args {tool_args}]")
-                    final_text.append(f"Result: {result.content}")
+                    logging.debug(f"[Calling tool {tool_name} with args {tool_args}]")
+                    logging.debug(f"Result: {result.content}")
                 except Exception as e:
-                    final_text.append(f"[Error calling tool {tool_name}: {str(e)}]")
+                    logging.error(f"[Error calling tool {tool_name}: {str(e)}]")
                     result = type('obj', (object,), {'content': f"Error: {str(e)}"})()
 
                 assistant_message_content.append(content)

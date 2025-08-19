@@ -10,8 +10,8 @@ class OpenAiClient(EnhancedMCPClient):
     Inherits common MCP functionality from EnhancedMCPClient.
     """
     
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config=None, config_path="config.yaml", env="development"):
+        super().__init__(config, config_path, env)
         self.openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     
     def format_schema(self, schema: dict) -> dict:
