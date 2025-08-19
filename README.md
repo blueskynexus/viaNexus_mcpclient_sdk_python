@@ -38,76 +38,88 @@ development:
 ```
 **Note:** Generate a software statement from the viaNexus api endpoint `v1/agent/software-statement`
 
-Here's a basic example of how to use the SDK to create a Gemini agent and run it:
+Here are examples of how to use the SDK to create an Anthropic agent and run it:
+
+### Simplified Approach (Recommended)
+
+The SDK now provides an enhanced client that automatically handles connection setup:
 
 ```python
 import asyncio
-from vianexus_agent_sdk.gemini.agents.llm_agent import GeminiLLMAgent
-from vianexus_agent_sdk.gemini.runners.runner import GeminiRunner
-from vianexus_agent_sdk.gemini.tools.agent_toolset import GeminiAgentToolset
-from vianexus_agent_sdk.providers.oauth import ViaNexusOAuthProvider
-# The following import is a patched fork of the adk-python which provides support for OAuth protocol through HTTP transport
-from google.adk.tools.agent_tool.agent_session_manager import StreamableHTTPConnectionParams
+import logging
+from dotenv import load_dotenv
+from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from tools.get_config import get_config
+
+load_dotenv()  # load environment variables from .env
 
 async def main():
-    # Before anything set the GEMINI API KEY as an Environment variable
-    os.environ["GEMINI_API_KEY"] = config["LLM_API_KEY"]
-
-    # 1. Set up the OAuth provider and authenticate
-    # This will handle the OAuth 2.0 flow to authenticate with the viaNexus Agent server.
-    # It will start a local server to handle the redirect callback.
-    oauth_provider_manager = ViaNexusOAuthProvider(
-        server_url="URL for the viaNexus Agent Server>", # Discovery of Auth server, the server providing /.well-known/oauth-protected-resource
-        server_port="<Port for the viaNexus Agent Server>", # Replace with viaNexus Agent server port
-        software_statement="JWT software statement"
-    )
-    # Intialize the OAuth client and starts the Callback server for client side of OAuth2.0/2.1
-    oauth_provider = await oauth_provider_manager.initialize()
-
-    # 2. Create connection parameters from the.oauth_provider
-    connection_params = StreamableHTTPConnectionParams(
-        # Remove trailing forward slash
-            url=f"{server_url}:{server_port}/agent",
-            auth=oauth_provider,
-    )
-
-    # 3. Create a toolset
-    agent_toolset = GeminiAgentToolset(connection_params=connection_params)
-
-    # 4. Create a Gemini agent
-    agent = GeminiLLMAgent(
-        model="<GEMINI model i.e. gemini-2.5-flash>",
-        tools=[agent_toolset],
-    )
-
-    # 5. Create a runner and execute the agent
-    runner = GeminiRunner(agent=agent, app_name="my-runner", user_id="UUID for the session", session_id="my-session")
-    await runner.initialize()
-
-     while True:
-        try:
-            query = input("Enter a query: ")
-            logging.debug(f"Query: {query}")
-            if query == "exit":
-                break
-            if not query:
-                continue
-            async for event in runner.run_async(query):
-                logging.info(f"Agent: {event}")
-        except KeyboardInterrupt:
-            logging.warning("Exiting...")
-            break
-        except Exception as e:
-            logging.warning(f"Error: {e}")
-            continue
+    try:
+        # Load the config file
+        config = get_config(env="development")
+        logging.basicConfig(level=config["LOG_LEVEL"])
+        
+        # Create the client with config - much simpler!
+        client = AnthropicClient(config)
+        
+        # Connect and run - handles all the connection setup internally
+        await client.connect_and_run()
+        
+    except Exception as e:
+        logging.error(f"Setup failed: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 ```
+
+### Original Stepwise Approach
+
+For more control over the connection process, you can still use the original approach:
+
+```python
+import asyncio
+import logging
+from dotenv import load_dotenv
+from vianexus_agent_sdk.clients.streamable_http import StreamableHttpSetup
+from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from tools.get_config import get_config
+
+load_dotenv()  # load environment variables from .env
+
+async def main():
+    try:
+        # Load the config file
+        config = get_config(env="development")
+        logging.basicConfig(level=config["LOG_LEVEL"])
+        # Create connection manager and establish auth layer
+        connection_manager = StreamableHttpSetup(config)
+        # Create the auth layer
+        await connection_manager.create_auth_layer()
+        # Get the connection context and establish transport
+        async with connection_manager.get_connection_context() as (readstream, writestream, get_session_id):
+            logging.debug("HTTP transport established")
+            client = AnthropicClient(readstream, writestream)
+            if await client.connect_to_server():
+                await client.chat_loop()
+            else:
+                logging.error("Failed to initialize MCP session")
+    
+    except Exception as e:
+        logging.error(f"Connection setup failed: {e}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 ## LLM Support
 
-Currently, the viaNexus AI Agent SDK for Python supports Google's Gemini family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
+Currently, the viaNexus AI Agent SDK for Python supports Google's Gemini, OpenAi, and Anthropic family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
 
 ## Contributing
 
