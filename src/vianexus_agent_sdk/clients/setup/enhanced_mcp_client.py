@@ -1,5 +1,5 @@
-from vianexus_agent_sdk.clients.base_mcp_client import BaseMCPClient
-from vianexus_agent_sdk.clients.streamable_http import StreamableHttpSetup
+from vianexus_agent_sdk.clients.setup.base_mcp_client import BaseMCPClient
+from vianexus_agent_sdk.clients.setup.streamable_http import StreamableHttpSetup
 import logging
 import yaml
 import os

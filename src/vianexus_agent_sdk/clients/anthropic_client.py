@@ -1,6 +1,6 @@
 import logging
 from anthropic import Anthropic
-from vianexus_agent_sdk.clients.enhanced_mcp_client import EnhancedMCPClient
+from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
 
 class AnthropicClient(EnhancedMCPClient):
     '''

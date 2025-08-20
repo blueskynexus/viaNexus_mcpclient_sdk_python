@@ -2,7 +2,7 @@ import logging
 from openai import OpenAI
 import os
 import json
-from vianexus_agent_sdk.clients.enhanced_mcp_client import EnhancedMCPClient
+from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
 
 class OpenAiClient(EnhancedMCPClient):
     """

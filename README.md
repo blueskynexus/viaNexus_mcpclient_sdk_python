@@ -1,3 +1,9 @@
+# TODOS
+- Move parent classes of clients to own subdirectory
+- Drop configuration setup from sdk, env and config.yaml should be passed by the developer
+- Figure out how to manage packages, llm dependencies shouldn't all download
+- Gemini suppport
+
 # viaNexus AI Agent SDK for Python
 
 The viaNexus AI Agent SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data through viaNexus.
