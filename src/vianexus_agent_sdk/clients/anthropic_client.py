@@ -1,15 +1,23 @@
 import logging
 from anthropic import Anthropic
 from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
+from vianexus_agent_sdk.types.config import AnthropicConfig
 
 class AnthropicClient(EnhancedMCPClient):
     '''
     Anthropic-specific MCP client that uses Claude for processing queries.
     Inherits common MCP functionality from EnhancedMCPClient.
     '''
-    def __init__(self, config=None, config_path="config.yaml", env="development"):
-        super().__init__(config, config_path, env)
-        self.anthropic = Anthropic()
+    def __init__(self, config:AnthropicConfig):
+        '''
+        Initialize the Anthropic client.
+        Args:
+            config: Configuration dictionary, must contain llm_api_key, server, port, and software_statement
+        '''
+        super().__init__(config)
+        self.anthropic = Anthropic(api_key=config.get("llm_api_key"))
+        self.model = config.get("llm_model", "claude-3-5-sonnet-20241022")
+        self.max_tokens = config.get("max_tokens", 1000)
     
     async def process_query(self, query: str) -> str:
         """Process a query using Claude and available tools"""
@@ -38,8 +46,8 @@ class AnthropicClient(EnhancedMCPClient):
             # If no tools available, just return a simple response
             try:
                 response = self.anthropic.messages.create(
-                    model="claude-3-5-sonnet-20241022",
-                    max_tokens=1000,
+                    model=self.model,
+                    max_tokens=self.max_tokens,
                     messages=messages
                 )
                 return response.content[0].text
@@ -49,8 +57,8 @@ class AnthropicClient(EnhancedMCPClient):
 
         # Initial Claude API call
         response = self.anthropic.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
+            model=self.model,
+            max_tokens=self.max_tokens,
             messages=messages,
             tools=available_tools
         )
@@ -94,8 +102,8 @@ class AnthropicClient(EnhancedMCPClient):
 
                 # Get next response from Claude
                 response = self.anthropic.messages.create(
-                    model="claude-3-5-sonnet-20241022",
-                    max_tokens=1000,
+                    model=self.model,
+                    max_tokens=self.max_tokens,
                     messages=messages,
                     tools=available_tools
                 )
