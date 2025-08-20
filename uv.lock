@@ -1795,6 +1795,8 @@ dependencies = [
     { name = "httpx" },
     { name = "openai" },
     { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "pyyaml" },
     { name = "requests" },
 ]
 
@@ -1808,6 +1810,8 @@ requires-dist = [
     { name = "httpx", specifier = "<1.0.0" },
     { name = "openai", specifier = ">=1.100.2" },
     { name = "pydantic", specifier = "<3.0.0" },
+    { name = "python-dotenv", specifier = ">=1.0.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
     { name = "requests", specifier = "==2.32.4" },
 ]
 

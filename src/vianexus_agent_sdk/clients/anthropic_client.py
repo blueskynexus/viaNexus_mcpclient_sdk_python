@@ -1,113 +1,87 @@
+from anthropic import AsyncAnthropic
 import logging
-from anthropic import Anthropic
 from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
-from vianexus_agent_sdk.types.config import AnthropicConfig
+
 
 class AnthropicClient(EnhancedMCPClient):
-    '''
-    Anthropic-specific MCP client that uses Claude for processing queries.
-    Inherits common MCP functionality from EnhancedMCPClient.
-    '''
-    def __init__(self, config:AnthropicConfig):
-        '''
-        Initialize the Anthropic client.
-        Args:
-            config: Configuration dictionary, must contain llm_api_key, server, port, and software_statement
-        '''
+    def __init__(self, config):
         super().__init__(config)
-        self.anthropic = Anthropic(api_key=config.get("llm_api_key"))
+        self.anthropic = AsyncAnthropic(api_key=config.get("llm_api_key"))
         self.model = config.get("llm_model", "claude-3-5-sonnet-20241022")
         self.max_tokens = config.get("max_tokens", 1000)
-    
+
     async def process_query(self, query: str) -> str:
-        """Process a query using Claude and available tools"""
         if not self.session:
-            return "Error: MCP session not initialized. Please check the connection."
-        
-        messages = [
-            {
-                "role": "user",
-                "content": query
-            }
-        ]
+            return "Error: MCP session not initialized."
 
         try:
-            response = await self.session.list_tools()
-            available_tools = [{
-                "name": tool.name,
-                "description": tool.description,
-                "input_schema": tool.inputSchema
-            } for tool in response.tools]
+            tool_list = await self.session.list_tools()
+            tools = [{
+                "name": t.name,
+                "description": t.description or "",
+                "input_schema": t.inputSchema,  # MCP -> Anthropic shape
+            } for t in (tool_list.tools or [])]
         except Exception as e:
-            logging.error(f"Error listing tools: {e}")
-            available_tools = []
+            logging.error("Error listing tools: %s", e)
+            tools = []
 
-        if not available_tools:
-            # If no tools available, just return a simple response
-            try:
-                response = self.anthropic.messages.create(
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    messages=messages
-                )
-                return response.content[0].text
-            except Exception as e:
-                logging.error(f"Error calling Claude API: {e}")
-                return f"Error: {str(e)}"
+        messages = [{"role": "user", "content": query}]
+        final_text_parts = []
 
-        # Initial Claude API call
-        response = self.anthropic.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            messages=messages,
-            tools=available_tools
-        )
+        while True:
+            resp = await self.anthropic.messages.create(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                messages=messages,
+                tools=tools if tools else None,
+                timeout=30,
+            )
 
-        # Process response and handle tool calls
-        final_text = []
+            # Emit any assistant text
+            saw_tool_use = False
+            assistant_blocks = []
+            for block in resp.content:
+                if block.type == "text":
+                    final_text_parts.append(block.text)
+                    assistant_blocks.append(block)
+                elif block.type == "tool_use":
+                    saw_tool_use = True
+                    assistant_blocks.append(block)
 
-        assistant_message_content = []
-        for content in response.content:
-            if content.type == 'text':
-                final_text.append(content.text)
-                assistant_message_content.append(content)
-            elif content.type == 'tool_use':
-                tool_name = content.name
-                tool_args = content.input
+                    tool_name = block.name
+                    tool_args = block.input if isinstance(block.input, dict) else {}
+                    try:
+                        result = await self.session.call_tool(tool_name, tool_args)
+                        # Coerce tool result to Anthropic content blocks
+                        if isinstance(result.content, str):
+                            tool_result_content = [{"type": "text", "text": result.content}]
+                        else:
+                            # Extract text from TextContent or other MCP content types
+                            if hasattr(result.content, 'text'):
+                                text_content = result.content.text
+                            elif hasattr(result.content, 'content'):
+                                text_content = result.content.content
+                            else:
+                                text_content = str(result.content)
+                            tool_result_content = [{"type": "text", "text": text_content}]
+                    except Exception as e:
+                        logging.error("Tool call failed: %s", e)
+                        tool_result_content = [{"type": "text", "text": f"Error: {e}"}]
 
-                # Execute tool call
-                try:
-                    result = await self.session.call_tool(tool_name, tool_args)
-                    logging.debug(f"[Calling tool {tool_name} with args {tool_args}]")
-                    logging.debug(f"Result: {result.content}")
-                except Exception as e:
-                    logging.error(f"[Error calling tool {tool_name}: {str(e)}]")
-                    result = type('obj', (object,), {'content': f"Error: {str(e)}"})()
-
-                assistant_message_content.append(content)
-                messages.append({
-                    "role": "assistant",
-                    "content": assistant_message_content
-                })
-                messages.append({
-                    "role": "user",
-                    "content": [
-                        {
+                    # Continue the turn: assistant announces tool_use, user supplies tool_result
+                    messages.append({"role": "assistant", "content": assistant_blocks})
+                    messages.append({
+                        "role": "user",
+                        "content": [{
                             "type": "tool_result",
-                            "tool_use_id": content.id,
-                            "content": result.content
-                        }
-                    ]
-                })
+                            "tool_use_id": block.id,
+                            "content": tool_result_content,
+                        }],
+                    })
+                    break  # send next Anthropic call with new messages
 
-                # Get next response from Claude
-                response = self.anthropic.messages.create(
-                    model=self.model,
-                    max_tokens=self.max_tokens,
-                    messages=messages,
-                    tools=available_tools
-                )
+            if not saw_tool_use:
+                # No more tool calls; conversation turn is done
+                break
 
-                final_text.append(response.content[0].text)
-
-        return "\n".join(final_text)
+        return "\n".join([t for t in final_text_parts if t])

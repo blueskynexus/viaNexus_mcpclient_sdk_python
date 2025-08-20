@@ -1,67 +1,72 @@
-from vianexus_agent_sdk.clients.setup.base_mcp_client import BaseMCPClient
-from vianexus_agent_sdk.clients.setup.streamable_http import StreamableHttpSetup
-from vianexus_agent_sdk.types.config import BaseConfig
+from __future__ import annotations
+
 import logging
+from typing import Optional
+
+from vianexus_agent_sdk.types.config import BaseConfig
+
+from .base_mcp_client import BaseMCPClient
+from .streamable_http import StreamableHttpSetup
+
 
 class EnhancedMCPClient(BaseMCPClient):
     """
-    Enhanced MCP client that automatically handles connection setup and authentication.
-    Subclasses only need to implement process_query().
+    High-level client that owns auth + transport setup.
+    Subclasses still implement `process_query`.
     """
-    
-    def __init__(self, config:BaseConfig):
-        """
-        Initialize the enhanced MCP client.
-        
-        Args:
-            config: Configuration dictionary, must contain server, port, and software_statement
-        """
+
+    def __init__(
+        self,
+        config: BaseConfig,
+        connection_manager: Optional[StreamableHttpSetup] = None,
+    ) -> None:
         self.config = config
-        self.connection_manager = None
+        self.connection_manager = (
+            connection_manager or StreamableHttpSetup.from_config(config)
+        )
         self.auth_layer = None
-        # Initialize with None streams, will be set during connection
-        super().__init__(None, None)
-     
-    async def setup_connection(self):
-        """Set up the connection and authentication layer"""
+        super().__init__(readstream=None, writestream=None)
+
+    async def setup_connection(self) -> bool:
         try:
-            # Create connection manager and establish auth layer
-            self.connection_manager = StreamableHttpSetup(self.config)
             self.auth_layer = await self.connection_manager.create_auth_layer()
             return True
         except Exception as e:
-            logging.error(f"Failed to setup connection: {e}")
+            logging.error("Failed to setup connection: %s", e)
             return False
-    
-    async def run(self):
-        """Complete setup, connect, and run the chat loop"""
+
+    async def run(self) -> bool:
         if not await self.setup_connection():
             return False
-            
+
         try:
-            # Get the connection context and establish transport
-            async with self.connection_manager.get_connection_context() as (readstream, writestream, get_session_id):
+            async with self.connection_manager.connection_context() as (
+                readstream,
+                writestream,
+                get_session_id,
+            ):
                 logging.debug("HTTP transport established")
-                
-                # Update our streams
                 self.readstream = readstream
                 self.writestream = writestream
-                
-                if await self.connect_to_server():
-                    await self.chat_loop()
-                else:
+
+                if not await self.connect_to_server():
                     logging.error("Failed to initialize MCP session")
                     return False
-                    
+
+                # Optional: log session id if available
+                try:
+                    sid = get_session_id() if get_session_id else None
+                    if sid:
+                        logging.debug("Session ID: %s", sid)
+                except Exception as _:
+                    pass
+
+                await self.chat_loop()
         except Exception as e:
-            logging.error(f"Connection setup failed: {e}")
+            logging.error("Connection setup failed: %s", e)
             return False
-        
+
         return True
-    
-    async def cleanup(self):
-        """Clean up resources"""
+
+    async def cleanup(self) -> None:
         await super().cleanup()
-        if self.connection_manager:
-            # Additional cleanup if needed
-            pass
