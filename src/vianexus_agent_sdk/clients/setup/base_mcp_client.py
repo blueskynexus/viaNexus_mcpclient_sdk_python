@@ -73,9 +73,10 @@ class BaseMCPClient(ABC):
 
                 print("\nProcessing...")
                 response = await self.process_query(query)
-                print("\n" + "=" * 50)
-                print("Response:")
-                print(response)
+                if (response != ""):
+                    print("\n" + "=" * 50)
+                    print("Response:")
+                    print(response)
                 print("=" * 50)
             except KeyboardInterrupt:
                 print("\n\nInterrupted by user. Goodbye!")
