@@ -16,3 +16,8 @@ class OpenAIConfig(BaseConfig):
     """Configuration specific to OpenAI client"""
     llm_api_key: str
     llm_model: Optional[str] = "gpt-4o-mini"
+
+class GeminiConfig(BaseConfig):
+    """Configuration specific to Gemini client"""
+    llm_api_key: str
+    llm_model: Optional[str] = "gemini-2.0-flash"
