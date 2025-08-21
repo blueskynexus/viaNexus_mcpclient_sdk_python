@@ -1,7 +1,9 @@
+import asyncio
+import json
+import logging
 from openai import AsyncOpenAI
-import asyncio, json, logging
-from typing import Any, Dict, List, Tuple
-from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
+from typing import Any, Dict, List
+from vianexus_agent_sdk.mcp_client.enhanced_mcp_client import EnhancedMCPClient
 
 class OpenAiClient(EnhancedMCPClient):
     def __init__(self, config):

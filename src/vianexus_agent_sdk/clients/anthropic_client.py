@@ -1,7 +1,7 @@
 from anthropic import AsyncAnthropic
 import logging
 import json
-from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
+from vianexus_agent_sdk.mcp_client.enhanced_mcp_client import EnhancedMCPClient
 
 class AnthropicClient(EnhancedMCPClient):
     def __init__(self, config):

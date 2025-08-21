@@ -1,9 +1,6 @@
-import logging
-import json
 from google import genai
 
-
-from vianexus_agent_sdk.clients.setup.enhanced_mcp_client import EnhancedMCPClient
+from vianexus_agent_sdk.mcp_client.enhanced_mcp_client import EnhancedMCPClient
 from vianexus_agent_sdk.types.config import GeminiConfig
 
 class GeminiClient(EnhancedMCPClient):
