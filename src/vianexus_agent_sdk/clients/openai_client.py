@@ -56,7 +56,7 @@ class OpenAiClient(EnhancedMCPClient):
 
             # Stream text
             if getattr(d, "content", None):
-                print(d.content, end="", flush=True)
+                logging.debug(f"Content: {d.content}")
                 text_out.append(d.content)
 
             # Merge tool_call deltas by index
@@ -76,8 +76,6 @@ class OpenAiClient(EnhancedMCPClient):
                             slot["name"] = fn.name
                         if getattr(fn, "arguments", None):
                             slot["arguments"] += fn.arguments
-
-        print()  # newline after streamed text
 
         # Finalize tool_calls: only keep complete ones
         complete_calls = []
