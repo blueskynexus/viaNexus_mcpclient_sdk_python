@@ -77,7 +77,7 @@ class BaseMCPClient(ABC):
                     print("\n" + "=" * 50)
                     print("Response:")
                     print(response)
-                print("=" * 50)
+                print("\n" + "=" * 50)
             except KeyboardInterrupt:
                 print("\n\nInterrupted by user. Goodbye!")
                 break

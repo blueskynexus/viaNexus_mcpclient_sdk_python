@@ -58,7 +58,7 @@ class OpenAiClient(EnhancedMCPClient):
 
             # Stream text
             if getattr(d, "content", None):
-                logging.debug(f"Content: {d.content}")
+                print(d.content, end="", flush=True)
                 text_out.append(d.content)
 
             # Merge tool_call deltas by index
@@ -99,7 +99,7 @@ class OpenAiClient(EnhancedMCPClient):
             # Return tool_calls keyed by id for execution
             tool_calls_by_id = {c["id"]: c for c in complete_calls}
             return assistant_msg["content"], tool_calls_by_id, assistant_msg
-
+        
         return assistant_msg["content"], {}, assistant_msg
 
  
@@ -134,7 +134,6 @@ class OpenAiClient(EnhancedMCPClient):
             return "Error: MCP session not initialized."
 
         tools = await self._list_tools_for_openai()
-        logging.info(f"Tools: {tools}")
         messages: List[Dict[str, Any]] = [{"role": "user", "content": query}]
         printed_any = False
 
