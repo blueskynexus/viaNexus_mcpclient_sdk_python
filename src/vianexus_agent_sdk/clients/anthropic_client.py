@@ -9,12 +9,13 @@ class AnthropicClient(EnhancedMCPClient):
         self.anthropic = AsyncAnthropic(api_key=config.get("llm_api_key"))
         self.model = config.get("llm_model", "claude-3-5-sonnet-20241022")
         self.max_tokens = config.get("max_tokens", 1000)
+        self.messages = []
+        self.max_history_length = config.get("max_history_length", 50)
 
     async def process_query(self, query: str) -> str:
         if not self.session:
             return "Error: MCP session not initialized."
 
-        # Discover MCP tools once per turn
         try:
             tool_list = await self.session.list_tools()
             tools = [{
@@ -26,47 +27,39 @@ class AnthropicClient(EnhancedMCPClient):
             logging.error("Error listing tools: %s", e)
             tools = []
 
-        messages = [{"role": "user", "content": query}]
+        self.messages.append({"role": "user", "content": query})
 
         while True:
-            # Stream assistant response
             async with self.anthropic.messages.stream(
                 model=self.model,
                 max_tokens=self.max_tokens,
-                messages=messages,
+                messages=self.messages,
                 tools=tools or None,
+                system="You are a skilled Financial Analyst."
             ) as stream:
-                # Live text stream
                 async for event in stream:
                     if event.type == "content_block_delta" and getattr(event.delta, "type", "") == "text_delta":
                         print(event.delta.text, end="", flush=True)
 
-                # Get the fully materialized assistant message (includes tool_use blocks)
                 msg = await stream.get_final_message()
 
-            # Collect tool_use blocks
             tool_uses = [b for b in msg.content if getattr(b, "type", None) == "tool_use"]
-            # Add the assistant message we just streamed to the conversation
-            messages.append({"role": "assistant", "content": msg.content})
+            self.messages.append({"role": "assistant", "content": msg.content})
 
             if not tool_uses:
-                print()  # newline after final streamed text
-                return ""  # already streamed to stdout
+                print()
+                self._trim_history()
+                return ""
 
-            # Execute tools and return results in a single user message
             result_blocks = []
             for tub in tool_uses:
                 name = tub.name
                 args = tub.input if isinstance(tub.input, dict) else {}
                 try:
                     result = await self.session.call_tool(name, args)
-                    # Normalize tool result to Anthropic content blocks
-                    if isinstance(result, dict) and "content" in result:
-                        payload = result["content"]
-                    else:
-                        payload = result
+                    payload = result.content
                     if isinstance(payload, (dict, list)):
-                        text_payload = json.dumps(payload, ensure_ascii=False)
+                        text_payload = payload[0].text
                     else:
                         text_payload = str(payload)
                     result_blocks.append({
@@ -82,4 +75,9 @@ class AnthropicClient(EnhancedMCPClient):
                         "content": [{"type": "text", "text": f"Error: {e}"}],
                     })
 
-            messages.append({"role": "user", "content": result_blocks})
+            self.messages.append({"role": "user", "content": result_blocks})
+
+    def _trim_history(self):
+        """Keep conversation history within reasonable bounds"""
+        if len(self.messages) > self.max_history_length:
+            self.messages = self.messages[-self.max_history_length:]
