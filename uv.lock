@@ -1076,25 +1076,6 @@ wheels = [
 ]
 
 [[package]]
-name = "openai"
-version = "1.100.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "distro" },
-    { name = "httpx" },
-    { name = "jiter" },
-    { name = "pydantic" },
-    { name = "sniffio" },
-    { name = "tqdm" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/36/e2e24d419438a5e66aa6445ec663194395226293d214bfe615df562b2253/openai-1.100.2.tar.gz", hash = "sha256:787b4c3c8a65895182c58c424f790c25c790cc9a0330e34f73d55b6ee5a00e32", size = 507954, upload-time = "2025-08-19T15:32:47.854Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/db/8d/9ab1599c7942b3d04784ac5473905dc543aeb30a1acce3591d0b425682db/openai-1.100.2-py3-none-any.whl", hash = "sha256:54d3457b2c8d7303a1bc002a058de46bdd8f37a8117751c7cf4ed4438051f151", size = 787755, upload-time = "2025-08-19T15:32:46.252Z" },
-]
-
-[[package]]
 name = "opentelemetry-api"
 version = "1.36.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1793,10 +1774,7 @@ dependencies = [
     { name = "google-genai" },
     { name = "google-generativeai" },
     { name = "httpx" },
-    { name = "openai" },
     { name = "pydantic" },
-    { name = "python-dotenv" },
-    { name = "pyyaml" },
     { name = "requests" },
 ]
 
@@ -1808,10 +1786,7 @@ requires-dist = [
     { name = "google-genai", specifier = "==1.25.0" },
     { name = "google-generativeai", specifier = "==0.5.4" },
     { name = "httpx", specifier = "<1.0.0" },
-    { name = "openai", specifier = ">=1.100.2" },
     { name = "pydantic", specifier = "<3.0.0" },
-    { name = "python-dotenv", specifier = ">=1.0.0" },
-    { name = "pyyaml", specifier = ">=6.0" },
     { name = "requests", specifier = "==2.32.4" },
 ]
 
