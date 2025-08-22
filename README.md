@@ -1,6 +1,3 @@
-# TODOS
-- Figure out how to manage packages, llm dependencies shouldn't all download
-
 # viaNexus AI Agent SDK for Python
 
 The viaNexus AI Agent SDK for Python provides a convenient way to create a financial data agent with access to reliable financial data through viaNexus.
@@ -44,23 +41,93 @@ development:
 
 Here are examples of how to use the SDK to create an Anthropic agent and run it:
 
-### Ultra-Simplified Approach (Recommended)
+### Anthropic Example Setup
 
 ```python
 import os
 import asyncio
 from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
 
+user_config = {} # see example config.yaml for setup
 
-async def main(config):
+async def main():
     try:
-        client = AnthropicClient(config)
+        client = AnthropicClient(user_config)
         await client.run()
     except Exception as e:
         print(f"Connection setup failed: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(main(user_config))
+    asyncio.run(main())
+```
+
+### Gemini Example Setup
+Here's a basic example of how to use the SDK to create a Gemini agent and run it:
+
+```python
+import asyncio
+from vianexus_agent_sdk.gemini.agents.llm_agent import GeminiLLMAgent
+from vianexus_agent_sdk.gemini.runners.runner import GeminiRunner
+from vianexus_agent_sdk.gemini.tools.agent_toolset import GeminiAgentToolset
+from vianexus_agent_sdk.providers.oauth import ViaNexusOAuthProvider
+# The following import is a patched fork of the adk-python which provides support for OAuth protocol through HTTP transport
+from google.adk.tools.agent_tool.agent_session_manager import StreamableHTTPConnectionParams
+
+async def main():
+    # Before anything set the GEMINI API KEY as an Environment variable
+    os.environ["GEMINI_API_KEY"] = config["LLM_API_KEY"]
+
+    # 1. Set up the OAuth provider and authenticate
+    # This will handle the OAuth 2.0 flow to authenticate with the viaNexus Agent server.
+    # It will start a local server to handle the redirect callback.
+    oauth_provider_manager = ViaNexusOAuthProvider(
+        server_url="URL for the viaNexus Agent Server>", # Discovery of Auth server, the server providing /.well-known/oauth-protected-resource
+        server_port="<Port for the viaNexus Agent Server>", # Replace with viaNexus Agent server port
+        software_statement="JWT software statement"
+    )
+    # Intialize the OAuth client and starts the Callback server for client side of OAuth2.0/2.1
+    oauth_provider = await oauth_provider_manager.initialize()
+
+    # 2. Create connection parameters from the.oauth_provider
+    connection_params = StreamableHTTPConnectionParams(
+        # Remove trailing forward slash
+            url=f"{server_url}:{server_port}/agent",
+            auth=oauth_provider,
+    )
+
+    # 3. Create a toolset
+    agent_toolset = GeminiAgentToolset(connection_params=connection_params)
+
+    # 4. Create a Gemini agent
+    agent = GeminiLLMAgent(
+        model="<GEMINI model i.e. gemini-2.5-flash>",
+        tools=[agent_toolset],
+    )
+
+    # 5. Create a runner and execute the agent
+    runner = GeminiRunner(agent=agent, app_name="my-runner", user_id="UUID for the session", session_id="my-session")
+    await runner.initialize()
+
+     while True:
+        try:
+            query = input("Enter a query: ")
+            logging.debug(f"Query: {query}")
+            if query == "exit":
+                break
+            if not query:
+                continue
+            async for event in runner.run_async(query):
+                logging.info(f"Agent: {event}")
+        except KeyboardInterrupt:
+            logging.warning("Exiting...")
+            break
+        except Exception as e:
+            logging.warning(f"Error: {e}")
+            continue
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
 ```
 
 ## Contributing
