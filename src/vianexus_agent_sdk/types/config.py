@@ -11,13 +11,3 @@ class AnthropicConfig(BaseConfig):
     llm_api_key: str
     llm_model: Optional[str] = "claude-3-5-sonnet-20241022"
     max_tokens: Optional[int] = 1000
-
-class OpenAIConfig(BaseConfig):
-    """Configuration specific to OpenAI client"""
-    llm_api_key: str
-    llm_model: Optional[str] = "gpt-4o-mini"
-
-class GeminiConfig(BaseConfig):
-    """Configuration specific to Gemini client"""
-    llm_api_key: str
-    llm_model: Optional[str] = "gemini-2.0-flash"
