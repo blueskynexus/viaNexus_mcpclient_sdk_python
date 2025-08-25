@@ -15,7 +15,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         """Handle GET request from OAuth redirect."""
-        logging.info(f"Received callback: {self.path}")
+        logging.debug(f"Received callback: {self.path}")
         parsed = urlparse(self.path)
         query_params = parse_qs(parsed.query)
 
@@ -66,7 +66,7 @@ class CallbackServer():
         self.server = HTTPServer(("localhost", self.port), handler_class)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
-        logging.info(f"🖥️  Started callback server on http://localhost:{self.port}")
+        logging.debug(f"Started callback server on http://localhost:{self.port}")
 
     def stop(self):
         """Stop the callback server."""

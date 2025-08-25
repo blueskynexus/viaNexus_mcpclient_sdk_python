@@ -8,7 +8,7 @@ This SDK allows you to build a powerful financial Agent or digital employee/assi
 To install the SDK, you can use uv:
 
 ```bash
-    uv add git+https://github.com/blueskynexus/viaNexus-agent-sdk-python --tag v0.1.16-pre
+    uv add git+https://github.com/blueskynexus/viaNexus-agent-sdk-python --tag v0.1.17-pre
 ```
 ### Dependencies
 - None required
@@ -16,9 +16,10 @@ To install the SDK, you can use uv:
 - **Note:** _Do not install the google-adk module from google, use the one provided by the vianexus_agent_sdk it has been patched to follow OAuth authentication protocol in the HTTP transport_
 
 ## Usage
-### LLM Models
-LLM selection or use is handled within the SDK, there is no need to integrate seperately, as LLM support expands, this list will grow accordingly.
-- GEMINI: gemini-2.5-flash, gemini-2.5-pro
+## LLM Support
+
+Currently, the viaNexus AI Agent SDK for Python supports Google's Gemini and Anthropic family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
+
 
 ### OAuth
 **Note:** OAuth is handled by the viaNexus_agent_sdk in the HTTP transport, you do not need to setup any authentication or authorization mechanisms
@@ -36,8 +37,31 @@ development:
       server_port: <viaNexus Agent Port>
       software_statement: "<SOFTWARE STATEMENT>"
 ```
-**Note:** Generate a software statement from the viaNexus api endpoint `v1/agent/software-statement`
+**Note:** Generate a software statement from the viaNexus api endpoint `v1/agents/register`
 
+Here are examples of how to use the SDK to create an Anthropic agent and run it:
+
+### Anthropic Example Setup
+
+```python
+import os
+import asyncio
+from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
+
+user_config = {} # see example config.yaml for setup
+
+async def main():
+    try:
+        client = AnthropicClient(user_config)
+        await client.run()
+    except Exception as e:
+        print(f"Connection setup failed: {e}")
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Gemini Example Setup
 Here's a basic example of how to use the SDK to create a Gemini agent and run it:
 
 ```python
@@ -105,9 +129,6 @@ if __name__ == "__main__":
     asyncio.run(main())
 
 ```
-## LLM Support
-
-Currently, the viaNexus AI Agent SDK for Python supports Google's Gemini family of models. As the SDK matures, we plan to extend support to other Large Language Models (LLMs) to provide a wider range of options for your conversational AI applications.
 
 ## Contributing
 
