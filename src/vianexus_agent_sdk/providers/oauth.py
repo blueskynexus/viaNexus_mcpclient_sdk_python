@@ -55,7 +55,7 @@ class ViaNexusOAuthProvider:
         self.software_statement: str = software_statement
         self.callback_server: CallbackServer | None = None
 
-    async def initialize(self) -> tuple[ClientSession, str]:
+    async def initialize(self) -> ViaNexusOAuthClientProvider:
         """Initialize the server connection."""
         try:
             # Find a free port for the callback server
