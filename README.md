@@ -47,187 +47,21 @@ The `AnthropicClient` provides two usage modes for different integration scenari
 1. **Interactive REPL Mode**: For interactive chat sessions
 2. **Single Question Mode**: For programmatic integration where you need string responses
 
-#### Configuration
-
-First, create a configuration dictionary with the required parameters:
-
-```python
-config = {
-    "llm_api_key": "your-anthropic-api-key",
-    "llm_model": "claude-3-5-sonnet-20241022",  # or your preferred Claude model
-    "max_tokens": 1000,
-    "max_history_length": 50,
-    "server": "your-vianexus-server-url",
-    "port": 443,
-    "software_statement": "your-software-statement-jwt"
-}
-```
-
 #### Mode 1: Interactive REPL Chat
 
 Use this mode for interactive chat sessions where responses are streamed to the console:
-
-```python
-import asyncio
-from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
-
-async def interactive_mode():
-    """Run the client in interactive REPL mode."""
-    config = {
-        "llm_api_key": "your-anthropic-api-key",
-        "llm_model": "claude-3-5-sonnet-20241022",
-        "max_tokens": 1000,
-        "server": "your-vianexus-server-url",
-        "port": 443,
-        "software_statement": "your-software-statement-jwt"
-    }
-    
-    try:
-        client = AnthropicClient(config)
-        await client.run()  # Starts interactive chat loop
-    except Exception as e:
-        print(f"Connection setup failed: {e}")
-
-if __name__ == "__main__":
-    asyncio.run(interactive_mode())
-```
 
 #### Mode 2: Single Question Integration
 
 Use this mode when you need to integrate the client into your application and get programmatic responses:
 
-```python
-import asyncio
-from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
-
-async def single_question_mode():
-    """Use the client for single questions with string responses."""
-    config = {
-        "llm_api_key": "your-anthropic-api-key", 
-        "llm_model": "claude-3-5-sonnet-20241022",
-        "max_tokens": 1000,
-        "server": "your-vianexus-server-url",
-        "port": 443,
-        "software_statement": "your-software-statement-jwt"
-    }
-    
-    client = AnthropicClient(config)
-    
-    try:
-        # Setup connection
-        if not await client.setup_connection():
-            print("Failed to setup connection")
-            return
-            
-        # Establish MCP session
-        async with client.connection_manager.connection_context() as (readstream, writestream, get_session_id):
-            client.readstream = readstream
-            client.writestream = writestream
-            
-            if not await client.connect_to_server():
-                print("Failed to connect to MCP server")
-                return
-                
-            # Now you can ask single questions
-            response = await client.ask_single_question("What is the current price of AAPL?")
-            print(f"Response: {response}")
-            
-            response = await client.ask_single_question("Show me the 52-week high and low for TSLA")
-            print(f"Response: {response}")
-            
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        await client.cleanup()
-
-if __name__ == "__main__":
-    asyncio.run(single_question_mode())
-```
-
 #### Configuration from YAML File
 
 You can also load configuration from a YAML file:
 
-```python
-import yaml
-import asyncio
-from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
-
-async def main():
-    # Load config from YAML
-    with open('config.yaml', 'r') as file:
-        full_config = yaml.safe_load(file)
-        env_config = full_config.get('development', {})
-    
-    # Prepare client config
-    client_config = {
-        "llm_api_key": env_config.get("LLM_API_KEY"),
-        "llm_model": env_config.get("LLM_MODEL", "claude-3-5-sonnet-20241022"),
-        "max_tokens": env_config.get("MAX_TOKENS", 1000),
-        "server": env_config["agentServers"]["viaNexus"]["server_url"],
-        "port": env_config["agentServers"]["viaNexus"]["server_port"],
-        "software_statement": env_config["agentServers"]["viaNexus"]["software_statement"]
-    }
-    
-    client = AnthropicClient(client_config)
-    
-    # Use either mode
-    await client.run()  # Interactive mode
-    # OR
-    # response = await client.ask_single_question("Your question")  # Single question mode
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
-
 #### Integration in Your Application
 
 Here's how to integrate the client into a web application or service:
-
-```python
-from fastapi import FastAPI
-from vianexus_agent_sdk.clients.anthropic_client import AnthropicClient
-import asyncio
-
-app = FastAPI()
-client = None
-
-@app.on_event("startup")
-async def startup_event():
-    global client
-    config = {
-        "llm_api_key": "your-anthropic-api-key",
-        "llm_model": "claude-3-5-sonnet-20241022",
-        "server": "your-vianexus-server-url", 
-        "port": 443,
-        "software_statement": "your-software-statement-jwt"
-    }
-    
-    client = AnthropicClient(config)
-    await client.setup_connection()
-
-@app.post("/ask")
-async def ask_question(question: str):
-    """API endpoint to ask financial questions."""
-    try:
-        async with client.connection_manager.connection_context() as (readstream, writestream, get_session_id):
-            client.readstream = readstream
-            client.writestream = writestream
-            
-            if not await client.connect_to_server():
-                return {"error": "Failed to connect to MCP server"}
-                
-            response = await client.ask_single_question(question)
-            return {"response": response}
-            
-    except Exception as e:
-        return {"error": str(e)}
-
-@app.on_event("shutdown") 
-async def shutdown_event():
-    if client:
-        await client.cleanup()
-```
 
 #### Key Differences Between Modes
 
